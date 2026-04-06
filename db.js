@@ -52,8 +52,8 @@ const DB = {
     },
 
     isSessionActive() {
-        return localStorage.getItem(this.SESSION_KEY) !== null;
-    },
+       return false; // Siempre mostrar login
+   },
 
     destroySession() {
         localStorage.removeItem(this.SESSION_KEY);
