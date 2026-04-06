@@ -1,0 +1,10 @@
+{
+  "name": "Presupuestos Eléctricos",
+  "short_name": "Presupuestos",
+  "description": "App para generar presupuestos eléctricos",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait"
+}

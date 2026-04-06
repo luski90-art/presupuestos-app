@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presupuestos Eléctricos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>⚡ Presupuestos Eléctricos</h1>
+            <nav>
+                <button onclick="mostrarSeccion('presupuestos')" class="nav-btn active">Presupuestos</button>
+                <button onclick="mostrarSeccion('clientes')" class="nav-btn">Clientes</button>
+                <button onclick="mostrarSeccion('precios')" class="nav-btn">Precios</button>
+            </nav>
+        </header>
+
+        <!-- SECCIÓN PRESUPUESTOS -->
+        <section id="presupuestos" class="seccion active">
+            <div class="toolbar">
+                <h2>Nuevo Presupuesto</h2>
+            </div>
+
+            <div class="form-group">
+                <label>Tipo de Presupuesto:</label>
+                <select id="tipoPresupuesto" onchange="cargarConceptos()">
+                    <option value="averias">Averías</option>
+                    <option value="piso">Piso Completo</option>
+                    <option value="bano-cocina">Reforma Baño/Cocina</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Cliente:</label>
+                <select id="clienteSelect">
+                    <option value="">Seleccionar cliente...</option>
+                </select>
+            </div>
+
+            <div class="conceptos-box">
+                <h3>Añadir Conceptos</h3>
+                <div class="form-row">
+                    <select id="conceptoSelect" style="flex: 2">
+                        <option value="">Seleccionar concepto...</option>
+                    </select>
+                    <input type="number" id="cantidadInput" placeholder="Cantidad" min="1" value="1">
+                    <button onclick="agregarConcepto()" class="btn-primary">Añadir</button>
+                </div>
+
+                <table id="tablaConceptos">
+                    <thead>
+                        <tr>
+                            <th>Concepto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unit.</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaConceptos">
+                        <tr>
+                            <td colspan="5" class="empty">No hay conceptos añadidos</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="totales">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span id="subtotal">0.00 €</span>
+                </div>
+                <div class="total-row">
+                    <span>IVA (21%):</span>
+                    <span id="iva">0.00 €</span>
+                </div>
+                <div class="total-row total-final">
+                    <span>TOTAL:</span>
+                    <span id="total">0.00 €</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Notas / Observaciones:</label>
+                <textarea id="notasPresupuesto" rows="3"></textarea>
+            </div>
+
+            <div class="actions">
+                <button onclick="generarPDF()" class="btn-success">📄 Generar PDF</button>
+                <button onclick="guardarPresupuesto()" class="btn-primary">💾 Guardar</button>
+                <button onclick="limpiarPresupuesto()" class="btn-secondary">🗑️ Limpiar</button>
+            </div>
+
+            <div class="historial">
+                <h3>Historial de Presupuestos</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Tipo</th>
+                            <th>Total</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historialPresupuestos">
+                        <tr>
+                            <td colspan="5" class="empty">No hay presupuestos guardados</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN CLIENTES -->
+        <section id="clientes" class="seccion">
+            <div class="toolbar">
+                <h2>Gestión de Clientes</h2>
+                <button onclick="mostrarFormCliente()" class="btn-primary">+ Nuevo Cliente</button>
+            </div>
+
+            <div id="formCliente" class="form-box" style="display: none;">
+                <h3>Datos del Cliente</h3>
+                <input type="hidden" id="clienteId">
+                <div class="form-row">
+                    <input type="text" id="clienteNombre" placeholder="Nombre *" required>
+                    <input type="text" id="clienteApellidos" placeholder="Apellidos *" required>
+                </div>
+                <div class="form-row">
+                    <input type="tel" id="clienteTelefono" placeholder="Teléfono *" required>
+                    <input type="email" id="clienteEmail" placeholder="Email">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="clienteDireccion" placeholder="Dirección">
+                </div>
+                <div class="form-row">
+                    <input type="text" id="clienteNIF" placeholder="NIF/CIF">
+                    <button onclick="guardarCliente()" class="btn-success">Guardar</button>
+                    <button onclick="cancelarCliente()" class="btn-secondary">Cancelar</button>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Dirección</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="listaClientes">
+                    <tr>
+                        <td colspan="5" class="empty">No hay clientes registrados</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SECCIÓN PRECIOS -->
+        <section id="precios" class="seccion">
+            <div class="toolbar">
+                <h2>Gestión de Precios</h2>
+                <select id="filtroCategoriaPrecios" onchange="mostrarPrecios()">
+                    <option value="">Todas las categorías</option>
+                    <option value="averias">Averías</option>
+                    <option value="piso">Piso Completo</option>
+                    <option value="bano-cocina">Reforma Baño/Cocina</option>
+                </select>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Categoría</th>
+                        <th>Precio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="listaPrecios">
+                </tbody>
+            </table>
+        </section>
+    </div>
+
+    <script src="db.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
